@@ -192,7 +192,7 @@ variant type::get_metadata(const variant& key) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-variant type::create(vector<argument> args) const
+variant type::create(const vector<argument>& args) const
 {
     auto& ctors = m_type_data->get_class_data().m_ctors;
     for (const auto& ctor : ctors)
@@ -203,6 +203,18 @@ variant type::create(vector<argument> args) const
 
     return variant();
 }
+    variant type::create() const
+    {
+        static std::vector<argument> args ={};
+        auto& ctors = m_type_data->get_class_data().m_ctors;
+        for (const auto& ctor : ctors)
+        {
+            if (detail::compare_with_arg_list::compare(ctor.get_parameter_infos(), args))
+                return ctor.invoke_variadic(args);
+        }
+
+        return variant();
+    }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 

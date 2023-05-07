@@ -25,7 +25,8 @@
 *                                                                                   *
 *************************************************************************************/
 
-#include "unit_tests/variant/test_enums.h"
+
+#include "test_enums.h"
 
 #include <catch/catch.hpp>
 #include <rttr/type>
@@ -34,9 +35,9 @@ using namespace rttr;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from empty", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from empty", "[rttr::variant]")
 {
-    variant var;
+    rttr::variant var;
     bool ok = false;
     CHECK(var.to_uint64(&ok) == 0);
     CHECK(ok == false);
@@ -44,9 +45,9 @@ TEST_CASE("variant::to_uint64() - from empty", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from bool", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from bool", "[rttr::variant]")
 {
-    variant var = true;
+    rttr::variant var = true;
     REQUIRE(var.is_valid() == true);
     REQUIRE(var.can_convert<uint64_t>() == true);
 
@@ -73,11 +74,11 @@ TEST_CASE("variant::to_uint64() - from bool", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from char", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from char", "[rttr::variant]")
 {
     SECTION("valid conversion")
     {
-        variant var = char('A');
+        rttr::variant var = char('A');
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 65);
@@ -93,7 +94,7 @@ RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
     {
         SECTION("invalid conversion negative")
         {
-            variant var = char(-60);
+            rttr::variant var = char(-60);
             bool ok = false;
             CHECK(var.to_uint64(&ok) == 0);
             CHECK(ok == false);
@@ -107,11 +108,11 @@ RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from std::string", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from std::string", "[rttr::variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = std::string("17446744073709551615");
+        rttr::variant var = std::string("17446744073709551615");
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
 
@@ -124,7 +125,7 @@ TEST_CASE("variant::to_uint64() - from std::string", "[variant]")
 
     SECTION("invalid conversion negative")
     {
-        variant var = std::string("-2147483640");
+        rttr::variant var = std::string("-2147483640");
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 0);
         CHECK(ok == false);
@@ -133,7 +134,7 @@ TEST_CASE("variant::to_uint64() - from std::string", "[variant]")
 
     SECTION("too big")
     {
-        variant var = std::string("20446744073709551615");
+        rttr::variant var = std::string("20446744073709551615");
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 0);
         CHECK(ok == false);
@@ -142,7 +143,7 @@ TEST_CASE("variant::to_uint64() - from std::string", "[variant]")
 
     SECTION("invalid conversion")
     {
-        variant var = std::string("text 34 and text");
+        rttr::variant var = std::string("text 34 and text");
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 0);
         CHECK(ok == false);
@@ -158,11 +159,11 @@ TEST_CASE("variant::to_uint64() - from std::string", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from int", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from int", "[rttr::variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = 50;
+        rttr::variant var = 50;
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 50);
@@ -174,7 +175,7 @@ TEST_CASE("variant::to_uint64() - from int", "[variant]")
 
     SECTION("invalid conversion negative")
     {
-        variant var = -60;
+        rttr::variant var = -60;
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 0);
         CHECK(ok == false);
@@ -184,11 +185,11 @@ TEST_CASE("variant::to_uint64() - from int", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from float", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from float", "[rttr::variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = 214748.9f;
+        rttr::variant var = 214748.9f;
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 214748);
@@ -200,7 +201,7 @@ TEST_CASE("variant::to_uint64() - from float", "[variant]")
 
     SECTION("invalid conversion negative")
     {
-        variant var = -21.9f;
+        rttr::variant var = -21.9f;
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 0);
         CHECK(ok == false);
@@ -209,7 +210,7 @@ TEST_CASE("variant::to_uint64() - from float", "[variant]")
 
     SECTION("too big")
     {
-        variant var = 3.40282e+37f;
+        rttr::variant var = 3.40282e+37f;
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 0);
         CHECK(ok == false);
@@ -219,11 +220,11 @@ TEST_CASE("variant::to_uint64() - from float", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from double", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from double", "[rttr::variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = 174407329551615.9;
+        rttr::variant var = 174407329551615.9;
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 174407329551615u);
@@ -235,7 +236,7 @@ TEST_CASE("variant::to_uint64() - from double", "[variant]")
 
     SECTION("invalid conversion negative")
     {
-        variant var = -21.9;
+        rttr::variant var = -21.9;
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 0);
         CHECK(ok == false);
@@ -244,7 +245,7 @@ TEST_CASE("variant::to_uint64() - from double", "[variant]")
 
     SECTION("too big")
     {
-        variant var = 19446744073709551615.2;
+        rttr::variant var = 19446744073709551615.2;
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 0);
         CHECK(ok == false);
@@ -255,11 +256,11 @@ TEST_CASE("variant::to_uint64() - from double", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from int8_t", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from int8_t", "[rttr::variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = int8_t(50);
+        rttr::variant var = int8_t(50);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == uint64_t(50));
@@ -271,7 +272,7 @@ TEST_CASE("variant::to_uint64() - from int8_t", "[variant]")
 
     SECTION("invalid conversion negative")
     {
-        variant var = int8_t(-60);
+        rttr::variant var = int8_t(-60);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 0);
         CHECK(ok == false);
@@ -281,11 +282,11 @@ TEST_CASE("variant::to_uint64() - from int8_t", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from int16_t", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from int16_t", "[rttr::variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = int16_t(50);
+        rttr::variant var = int16_t(50);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == uint64_t(50));
@@ -297,7 +298,7 @@ TEST_CASE("variant::to_uint64() - from int16_t", "[variant]")
 
     SECTION("invalid conversion negative")
     {
-        variant var = int16_t(-60);
+        rttr::variant var = int16_t(-60);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 0);
         CHECK(ok == false);
@@ -307,11 +308,11 @@ TEST_CASE("variant::to_uint64() - from int16_t", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from int32_t", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from int32_t", "[rttr::variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = int32_t(50);
+        rttr::variant var = int32_t(50);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == uint64_t(50));
@@ -323,7 +324,7 @@ TEST_CASE("variant::to_uint64() - from int32_t", "[variant]")
 
     SECTION("invalid conversion negative")
     {
-        variant var = int32_t(-60);
+        rttr::variant var = int32_t(-60);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 0);
         CHECK(ok == false);
@@ -333,11 +334,11 @@ TEST_CASE("variant::to_uint64() - from int32_t", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from int64_t", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from int64_t", "[rttr::variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = int64_t(50);
+        rttr::variant var = int64_t(50);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == uint64_t(50));
@@ -349,7 +350,7 @@ TEST_CASE("variant::to_uint64() - from int64_t", "[variant]")
 
     SECTION("invalid conversion negative")
     {
-        variant var = int64_t(-60);
+        rttr::variant var = int64_t(-60);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 0);
         CHECK(ok == false);
@@ -359,11 +360,11 @@ TEST_CASE("variant::to_uint64() - from int64_t", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from uint8_t", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from uint8_t", "[rttr::variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = uint8_t(50);
+        rttr::variant var = uint8_t(50);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 50);
@@ -376,11 +377,11 @@ TEST_CASE("variant::to_uint64() - from uint8_t", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from uint16_t", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from uint16_t", "[rttr::variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = uint16_t(50);
+        rttr::variant var = uint16_t(50);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 50);
@@ -393,11 +394,11 @@ TEST_CASE("variant::to_uint64() - from uint16_t", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from uint32_t", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from uint32_t", "[rttr::variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = uint32_t(50);
+        rttr::variant var = uint32_t(50);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 50);
@@ -410,11 +411,11 @@ TEST_CASE("variant::to_uint64() - from uint32_t", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from uint64_t", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from uint64_t", "[rttr::variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = uint64_t(3147483640);
+        rttr::variant var = uint64_t(3147483640);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 3147483640u);
@@ -427,11 +428,11 @@ TEST_CASE("variant::to_uint64() - from uint64_t", "[variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant::to_uint64() - from enum", "[variant]")
+TEST_CASE("rttr::variant::to_uint64() - from enum", "[rttr::variant]")
 {
     SECTION("valid conversion positive")
     {
-        variant var = enum_uint64_t::VALUE_1;
+        rttr::variant var = enum_uint64_t::VALUE_1;
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 17446744073709551615U);
@@ -443,7 +444,7 @@ TEST_CASE("variant::to_uint64() - from enum", "[variant]")
 
     SECTION("too small")
     {
-        variant var = enum_int8_t::VALUE_NEG;
+        rttr::variant var = enum_int8_t::VALUE_NEG;
         bool ok = false;
         CHECK(var.to_uint64(&ok) == 0);
         CHECK(ok == false);

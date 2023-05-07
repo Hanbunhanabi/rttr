@@ -69,7 +69,7 @@ class enumeration_wrapper_base;
 
 struct RTTR_LOCAL class_data
 {
-    class_data(get_derived_info_func func, std::vector<type> nested_types)
+    class_data(get_derived_info_func func, const std::vector<type>& nested_types)
     :   m_derived_info_func(func),
         m_nested_types(nested_types),
         m_dtor(create_invalid_item<destructor>())
