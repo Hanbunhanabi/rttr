@@ -535,7 +535,7 @@ function(get_latest_supported_cxx CXX_STANDARD)
     if(${CMAKE_VERSION} VERSION_LESS "3.8.0") 
         set(CMAKE_CXX_STANDARD 14)
     else()
-        set(CMAKE_CXX_STANDARD 17)
+        set(CMAKE_CXX_STANDARD 23)
     endif()    
 
     include(CheckCXXSourceCompiles)
