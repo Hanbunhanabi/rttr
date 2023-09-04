@@ -51,7 +51,7 @@ TEST_CASE("variant_associative_view::ctor", "[variant_associative_view]")
         CHECK(a.is_valid() == false);
         CHECK(b.is_valid() == false);
 
-        rttr::variant var;
+        variant var;
         variant_associative_view view = var.create_associative_view();
 
         CHECK(view.is_valid() == false);
@@ -64,7 +64,7 @@ TEST_CASE("variant_associative_view::ctor", "[variant_associative_view]")
 
    SECTION("invalid")
    {
-        rttr::variant var = 2;
+        variant var = 2;
         variant_associative_view view = var.create_associative_view();
         CHECK(view.is_valid() == false);
         CHECK(static_cast<bool>(view) == false);
@@ -74,7 +74,7 @@ TEST_CASE("variant_associative_view::ctor", "[variant_associative_view]")
 
    SECTION("valid")
    {
-        rttr::variant var = std::set<int>({1, 2, 3});
+        variant var = std::set<int>({1, 2, 3});
         variant_associative_view a = var.create_associative_view();
         CHECK(a.is_valid() == true);
         CHECK(static_cast<bool>(a) == true);
@@ -92,7 +92,7 @@ TEST_CASE("variant_associative_view::ctor", "[variant_associative_view]")
 
 TEST_CASE("variant_associative_view::other ctor", "[variant_associative_view]")
 {
-    rttr::variant var = std::set<int>({1, 2, 3});
+    variant var = std::set<int>({1, 2, 3});
     variant_associative_view a(var.create_associative_view());
     CHECK(a.is_valid() == true);
     CHECK(a.is_empty() == false);
@@ -106,7 +106,7 @@ TEST_CASE("variant_associative_view::get_type", "[variant_associative_view]")
 
     SECTION("valid test")
     {
-        rttr::variant var = std::set<int>({ 1, 2, 3 });
+        variant var = std::set<int>({ 1, 2, 3 });
         variant_associative_view view = var.create_associative_view();
 
         CHECK(view.get_type() == type::get<std::set<int>>());
@@ -116,12 +116,12 @@ TEST_CASE("variant_associative_view::get_type", "[variant_associative_view]")
 
     SECTION("invalid test")
     {
-        rttr::variant var = 23;
+        variant var = 23;
         variant_associative_view view = var.create_associative_view();
 
         CHECK(view.get_type().is_valid() == false);
 
-        var = rttr::variant();
+        var = variant();
         view = var.create_associative_view();
         CHECK(view.get_type().is_valid() == false);
     }
@@ -129,42 +129,45 @@ TEST_CASE("variant_associative_view::get_type", "[variant_associative_view]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("variant_associative_view::get_key_type/get_value_type", "[variant_associative_view]")
+TEST_CASE("variant_associative_view::get_key_type/get_value_type/has_value_type", "[variant_associative_view]")
 {
 
     SECTION("valid test")
     {
-        rttr::variant var = std::set<int>({ 1, 2, 3 });
+        variant var = std::set<int>({ 1, 2, 3 });
         variant_associative_view view = var.create_associative_view();
 
-        CHECK(view.get_key_type() == type::get<int>());
-        CHECK(view.get_value_type().is_valid() == false);
+        CHECK(view.get_key_type()               == type::get<int>());
+        CHECK(view.get_value_type().is_valid()  == false);
+        CHECK(view.is_key_only_type()           == true);
 
         var = std::map<int, std::string>{ { 1, "one" }, { 2, "two" }, { 3, "three" } };
         view = var.create_associative_view();
 
-        CHECK(view.get_key_type() == type::get<int>());
-        CHECK(view.get_value_type() == type::get<std::string>());
+        CHECK(view.get_key_type()     == type::get<int>());
+        CHECK(view.get_value_type()   == type::get<std::string>());
+        CHECK(view.is_key_only_type() == false);
     }
 
 
     SECTION("invalid test")
     {
-        rttr::variant var = 23;
+        variant var = 23;
         variant_associative_view view = var.create_associative_view();
 
         CHECK(view.get_key_type().is_valid()    == false);
         CHECK(view.get_value_type().is_valid()  == false);
+        CHECK(view.is_key_only_type()           == false);
     }
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::is_associative_container", "[variant_associative_view]")
+TEST_CASE("variant::is_associative_container", "[variant_associative_view]")
 {
     SECTION("invalid")
     {
-        rttr::variant var;
+        variant var;
         CHECK(var.is_associative_container() == false);
 
         var = 23;
@@ -183,7 +186,7 @@ TEST_CASE("rttr::variant::is_associative_container", "[variant_associative_view]
     {
         auto set = std::set<int>({ 1, 2, 3 });
 
-        rttr::variant var = set;
+        variant var = set;
         CHECK(var.is_associative_container() == true);
 
         var = std::ref(set);
@@ -197,7 +200,7 @@ TEST_CASE("rttr::variant::is_associative_container", "[variant_associative_view]
     {
         auto map = std::map<int, std::string>{ { 1, "one" }, { 2, "two" }, { 3, "three" } };
 
-        rttr::variant var = map;
+        variant var = map;
         CHECK(var.is_associative_container() == true);
     }
 
@@ -205,7 +208,7 @@ TEST_CASE("rttr::variant::is_associative_container", "[variant_associative_view]
     {
         auto multiset = std::multiset<int>{ 1, 2, 2, 3, 4 };
 
-        rttr::variant var = multiset;
+        variant var = multiset;
         CHECK(var.is_associative_container() == true);
     }
 
@@ -214,7 +217,7 @@ TEST_CASE("rttr::variant::is_associative_container", "[variant_associative_view]
         auto multimap = std::multimap<int, std::string>{ { 1, "one" }, { 2, "two" },
                                                          { 2, "two" }, { 3, "three" } };
 
-        rttr::variant var = multimap;
+        variant var = multimap;
         CHECK(var.is_associative_container() == true);
     }
 
@@ -222,7 +225,7 @@ TEST_CASE("rttr::variant::is_associative_container", "[variant_associative_view]
     {
         auto unordered_set = std::unordered_set<int>{ 1, 2, 2, 3, 4 };
 
-        rttr::variant var = unordered_set;
+        variant var = unordered_set;
         CHECK(var.is_associative_container() == true);
     }
 
@@ -230,7 +233,7 @@ TEST_CASE("rttr::variant::is_associative_container", "[variant_associative_view]
     {
         auto unordered_set = std::unordered_set<int>{ 1, 2, 2, 3, 4 };
 
-        rttr::variant var = unordered_set;
+        variant var = unordered_set;
         CHECK(var.is_associative_container() == true);
     }
 
@@ -238,7 +241,7 @@ TEST_CASE("rttr::variant::is_associative_container", "[variant_associative_view]
     {
         auto unordered_multiset = std::unordered_multiset<int>{ 1, 2, 2, 3, 4 };
 
-        rttr::variant var = unordered_multiset;
+        variant var = unordered_multiset;
         CHECK(var.is_associative_container() == true);
     }
 
@@ -247,7 +250,7 @@ TEST_CASE("rttr::variant::is_associative_container", "[variant_associative_view]
         auto unordered_multimap = std::unordered_multimap<int, std::string>{ { 1, "one" }, { 2, "two" },
                                                                              { 2, "two" }, { 3, "three" } };
 
-        rttr::variant var = unordered_multimap;
+        variant var = unordered_multimap;
         CHECK(var.is_associative_container() == true);
     }
 }
@@ -258,7 +261,7 @@ TEST_CASE("variant_associative_view::iterator operations", "[variant_associative
 {
     auto set = std::set<int>{ 1, 2, 3, 4 };
 
-    rttr::variant var = set;
+    variant var = set;
 
     auto view = var.create_associative_view();
 
@@ -295,7 +298,7 @@ TEST_CASE("variant_associative_view::insert", "[variant_associative_view]")
     SECTION("valid test - std::set")
     {
         auto set = std::set<int>();
-        rttr::variant var = set;
+        variant var = set;
         variant_associative_view view = var.create_associative_view();
 
         REQUIRE(view.is_valid() == true);
@@ -317,7 +320,7 @@ TEST_CASE("variant_associative_view::insert", "[variant_associative_view]")
     {
         {
             const std::set<int> set = { 1, 2, 3, 4, 5 };
-            rttr::variant var = std::cref(set);
+            variant var = std::cref(set);
             variant_associative_view view = var.create_associative_view();
 
             REQUIRE(view.is_valid() == true);
@@ -329,7 +332,7 @@ TEST_CASE("variant_associative_view::insert", "[variant_associative_view]")
         {
             const std::map<int, const std::string> map = { { 1, "one" }, { 2, "two" }, { 3, "three" } };
 
-            rttr::variant var = std::cref(map);
+            variant var = std::cref(map);
             variant_associative_view view = var.create_associative_view();
 
             REQUIRE(view.is_valid() == true);
@@ -343,7 +346,7 @@ TEST_CASE("variant_associative_view::insert", "[variant_associative_view]")
     SECTION("valid test - std::map")
     {
         auto map = std::map<int, std::string>();
-        rttr::variant var = map;
+        variant var = map;
         variant_associative_view view = var.create_associative_view();
 
         REQUIRE(view.is_valid() == true);
@@ -365,7 +368,7 @@ TEST_CASE("variant_associative_view::insert", "[variant_associative_view]")
     SECTION("invalid test")
     {
         {
-            rttr::variant var;
+            variant var;
             auto view = var.create_associative_view();
             auto ret = view.insert(2);
 
@@ -374,7 +377,7 @@ TEST_CASE("variant_associative_view::insert", "[variant_associative_view]")
         }
         {
             auto map = std::map<int, std::string>();
-            rttr::variant var = map;
+            variant var = map;
             auto map_view = var.create_associative_view();
 
             auto ret = map_view.insert(23);
@@ -390,7 +393,7 @@ TEST_CASE("variant_associative_view::find", "[variant_associative_view]")
     SECTION("valid test")
     {
         auto map = std::map<int, std::string>{ { 1, "one" }, { 2, "two" }, { 3, "three" } };
-        rttr::variant var = map;
+        variant var = map;
         variant_associative_view view = var.create_associative_view();
 
         REQUIRE(view.is_valid() == true);
@@ -411,7 +414,7 @@ TEST_CASE("variant_associative_view::find", "[variant_associative_view]")
 
     SECTION("invalid test")
     {
-        rttr::variant var_empty;
+        variant var_empty;
         auto view = var_empty.create_associative_view();
         CHECK(view.find(2) == view.end());
     }
@@ -425,7 +428,7 @@ TEST_CASE("variant_associative_view::equal_range", "[variant_associative_view]")
     {
         auto set = std::set<int>{ 1, 2, 3, 4 };
 
-        rttr::variant var = set;
+        variant var = set;
 
         auto view = var.create_associative_view();
         auto range = view.equal_range(3);
@@ -453,7 +456,7 @@ TEST_CASE("variant_associative_view::equal_range", "[variant_associative_view]")
         auto multimap = std::multimap<int, std::string>{ { 1, "A" }, { 2, "B" },  { 2, "C" },
                                                          { 2, "D" }, { 3, "E" } };
 
-        rttr::variant var = multimap;
+        variant var = multimap;
 
         auto view = var.create_associative_view();
         auto range = view.equal_range(2);
@@ -478,7 +481,7 @@ TEST_CASE("variant_associative_view::equal_range", "[variant_associative_view]")
 
     SECTION("invalid")
     {
-        rttr::variant var;
+        variant var;
         auto view = var.create_associative_view();
         auto ret = view.equal_range(23);
 
@@ -494,7 +497,7 @@ TEST_CASE("variant_associative_view::erase", "[variant_associative_view]")
     SECTION("std::set")
     {
         auto set = std::set<int>{ 1, 2, 3, 4 };
-        rttr::variant var = set;
+        variant var = set;
         auto view = var.create_associative_view();
 
         CHECK(view.erase(42) == 0);
@@ -506,7 +509,7 @@ TEST_CASE("variant_associative_view::erase", "[variant_associative_view]")
     SECTION("const std::set")
     {
         auto set = std::set<int>{ 1, 2, 3, 4 };
-        rttr::variant var = std::cref(set);
+        variant var = std::cref(set);
         auto view = var.create_associative_view();
 
         CHECK(view.erase(3) == 0);
@@ -517,7 +520,7 @@ TEST_CASE("variant_associative_view::erase", "[variant_associative_view]")
     {
         auto multimap = std::multimap<int, std::string>{ { 1, "A" }, { 2, "B" },  { 2, "C" },
                                                          { 2, "D" }, { 3, "E" } };
-        rttr::variant var = multimap;
+        variant var = multimap;
         auto view = var.create_associative_view();
 
         CHECK(view.erase(42) == 0);
@@ -531,7 +534,7 @@ TEST_CASE("variant_associative_view::erase", "[variant_associative_view]")
     SECTION("invalid")
     {
         auto set = std::set<int>{ 1, 2, 3, 4 };
-        rttr::variant var = set;
+        variant var = set;
         auto view = var.create_associative_view();
 
         CHECK(view.erase("invalid key") == 0);
@@ -545,7 +548,7 @@ TEST_CASE("variant_associative_view::clear", "[variant_associative_view]")
     SECTION("std::set")
     {
         auto set = std::set<int>{ 1, 2, 3, 4 };
-        rttr::variant var = set;
+        variant var = set;
         auto view = var.create_associative_view();
 
         CHECK(view.get_size() == 4);
@@ -560,7 +563,7 @@ TEST_CASE("variant_associative_view::clear", "[variant_associative_view]")
     SECTION("const std::set")
     {
         auto set = std::set<int>{ 1, 2, 3, 4 };
-        rttr::variant var = std::cref(set);
+        variant var = std::cref(set);
         auto view = var.create_associative_view();
 
         CHECK(view.get_size() == 4);
@@ -576,7 +579,7 @@ TEST_CASE("variant_associative_view::clear", "[variant_associative_view]")
     {
         auto multimap = std::multimap<int, std::string>{ { 1, "A" }, { 2, "B" },  { 2, "C" },
                                                          { 2, "D" }, { 3, "E" } };
-        rttr::variant var = multimap;
+        variant var = multimap;
         auto view = var.create_associative_view();
 
         CHECK(view.get_size() == 5);
@@ -590,7 +593,7 @@ TEST_CASE("variant_associative_view::clear", "[variant_associative_view]")
 
     SECTION("invalid")
     {
-        rttr::variant var;
+        variant var;
         auto view = var.create_associative_view();
         view.clear();
 
@@ -604,7 +607,7 @@ TEST_CASE("variant_associative_view::begin/end", "[variant_associative_view]")
 
     SECTION("valid test")
     {
-        rttr::variant var = std::set<int>({ 1, 2, 3 });
+        variant var = std::set<int>({ 1, 2, 3 });
         variant_associative_view view = var.create_associative_view();
 
         int i = 0;
@@ -623,7 +626,7 @@ TEST_CASE("variant_associative_view::begin/end", "[variant_associative_view]")
 
     SECTION("invalid test")
     {
-        rttr::variant var;
+        variant var;
         variant_associative_view view = var.create_associative_view();
 
         CHECK(view.begin() == view.end());

@@ -32,14 +32,14 @@
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read write
 
-template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, set_value, Metadata_Count>
+template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as_copy, set_value, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          C* pointer, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)),
             m_accessor(pointer)
         {
@@ -51,7 +51,6 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, set_valu
         bool is_readonly()  const RTTR_NOEXCEPT                 { return false; }
         bool is_static()    const RTTR_NOEXCEPT                 { return true; }
         type get_type()     const RTTR_NOEXCEPT                 { return type::get<C>(); }
-        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<C>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -68,6 +67,12 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, set_valu
             return (variant(*m_accessor));
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, return_as_copy, C*>(prop, m_accessor);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker(obj));
+        }
+
     private:
         C* m_accessor;
 };
@@ -76,14 +81,14 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, set_valu
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read_only
 
-template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as_copy, read_only, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          C* pointer, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
         {
             init();
@@ -94,7 +99,6 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, read_onl
         bool is_readonly()  const RTTR_NOEXCEPT                 { return true; }
         bool is_static()    const RTTR_NOEXCEPT                 { return true; }
         type get_type()     const RTTR_NOEXCEPT                 { return type::get<C>(); }
-        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<C>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -108,6 +112,12 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, read_onl
             return (variant(*m_accessor));
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, return_as_copy, C*>(prop, m_accessor);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker<read_only>(obj));
+        }
+
     private:
         C* m_accessor;
 };
@@ -116,14 +126,14 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_copy, read_onl
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read write
 
-template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count>
+template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as_ptr, set_as_ptr, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          C* pointer, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
         {
             static_assert(!std::is_pointer<C>::value, "The given type is already a pointer type!");
@@ -136,7 +146,6 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, set_as_pt
         bool is_readonly()  const RTTR_NOEXCEPT                 { return false; }
         bool is_static()    const RTTR_NOEXCEPT                 { return false; }
         type get_type()     const RTTR_NOEXCEPT                 { return type::get<C*>(); }
-        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<C>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -158,6 +167,12 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, set_as_pt
             return (variant(m_accessor));
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, return_as_ptr, C*>(prop, m_accessor);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker(obj));
+        }
+
     private:
         C* m_accessor;
 };
@@ -166,14 +181,14 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, set_as_pt
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read_only
 
-template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, return_as_ptr, read_only, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          C* pointer, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
         {
             init();
@@ -184,7 +199,6 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, read_only
         bool is_readonly()  const RTTR_NOEXCEPT                 { return true; }
         bool is_static()    const RTTR_NOEXCEPT                 { return true; }
         type get_type()     const RTTR_NOEXCEPT                 { return type::get<typename std::add_const<C>::type*>(); }
-        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<C>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -198,6 +212,12 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, read_only
             return (variant(m_accessor));
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, return_as_ptr, C*>(prop, m_accessor);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker<read_only>(obj));
+        }
+
     private:
         C* m_accessor;
 };
@@ -206,14 +226,14 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, return_as_ptr, read_only
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read write
 
-template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, C*, void, Acc_Level, get_as_ref_wrapper, set_as_ref_wrapper, Metadata_Count>
+template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, get_as_ref_wrapper, set_as_ref_wrapper, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          C* pointer, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
         {
             static_assert(!std::is_pointer<C>::value, "The given type is already a pointer type!");
@@ -226,7 +246,6 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, get_as_ref_wrapper, set_
         bool is_readonly()  const RTTR_NOEXCEPT                 { return false; }
         bool is_static()    const RTTR_NOEXCEPT                 { return false; }
         type get_type()     const RTTR_NOEXCEPT                 { return type::get< std::reference_wrapper<C> >(); }
-        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<C>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -243,6 +262,12 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, get_as_ref_wrapper, set_
             return (variant(std::ref(*m_accessor)));
         }
 
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, get_as_ref_wrapper, C*>(prop, m_accessor);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker(obj));
+        }
+
     private:
         C* m_accessor;
 };
@@ -251,14 +276,14 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, get_as_ref_wrapper, set_
 /////////////////////////////////////////////////////////////////////////////////////////
 // global property read_only
 
-template<typename C, access_levels Acc_Level, std::size_t Metadata_Count>
-class property_wrapper<object_ptr, C*, void, Acc_Level, get_as_ref_wrapper, read_only, Metadata_Count>
+template<typename Declaring_Typ, typename C, access_levels Acc_Level, std::size_t Metadata_Count, typename Visitor_List>
+class property_wrapper<object_ptr, Declaring_Typ, C*, void, Acc_Level, get_as_ref_wrapper, read_only, Metadata_Count, Visitor_List>
     : public property_wrapper_base, public metadata_handler<Metadata_Count>
 {
     public:
-        property_wrapper(string_view name, type declaring_type,
+        property_wrapper(string_view name,
                          C* pointer, std::array<metadata, Metadata_Count> metadata_list) RTTR_NOEXCEPT
-        :   property_wrapper_base(name, declaring_type),
+        :   property_wrapper_base(name, type::get<Declaring_Typ>()),
             metadata_handler<Metadata_Count>(std::move(metadata_list)), m_accessor(pointer)
         {
             init();
@@ -269,7 +294,6 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, get_as_ref_wrapper, read
         bool is_readonly()  const RTTR_NOEXCEPT                 { return true; }
         bool is_static()    const RTTR_NOEXCEPT                 { return true; }
         type get_type()     const RTTR_NOEXCEPT                 { return type::get< std::reference_wrapper< add_const_t<C>> >(); }
-        bool is_array()     const RTTR_NOEXCEPT                 { return detail::is_array<C>::value; }
 
         variant get_metadata(const variant& key) const { return metadata_handler<Metadata_Count>::get_metadata(key); }
 
@@ -281,6 +305,12 @@ class property_wrapper<object_ptr, C*, void, Acc_Level, get_as_ref_wrapper, read
         variant get_value(instance& object) const
         {
             return (variant(std::cref(*m_accessor)));
+        }
+
+        void visit(visitor& visitor, property prop) const RTTR_NOEXCEPT
+        {
+            auto obj = make_property_info<Declaring_Typ, get_as_ref_wrapper, C*>(prop, m_accessor);
+            visitor_iterator<Visitor_List>::visit(visitor, make_property_visitor_invoker<read_only>(obj));
         }
 
     private:

@@ -49,6 +49,7 @@ set(DOXYGEN_PREDEFINED        "DOXYGEN \\
                                RTTR_STATIC_CONSTEXPR=static constexpr \\
                                RTTR_NOEXCEPT_OR_NOTHROW=throw() \\
                                RTTR_DEPRECATED_WITH_MSG= \\
+                               RTTR_LOCAL= \\
                                ")
 set(DOXYGEN_EXCLUDE_SYMBOLS   "impl* \\
                                impl::* \\
@@ -132,11 +133,11 @@ set_target_properties(doc PROPERTIES FOLDER "Documentation")
 install(DIRECTORY "${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_CUSTOM_HTML_DIR}"
         DESTINATION "${DOXYGEN_DOC_INSTALL_DIR}"
         PATTERN "*.*"
-        PERMISSIONS OWNER_READ)
+        PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 
 install(FILES "${DOXYGEN_OUTPUT_DIRECTORY}/${DOXYGEN_INDEX_FILE}"
         DESTINATION "${DOXYGEN_DOC_INSTALL_DIR}"
-        PERMISSIONS OWNER_READ)
+        PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 
 #########################################################################################
 

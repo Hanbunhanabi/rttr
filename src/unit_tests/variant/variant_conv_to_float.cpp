@@ -25,8 +25,7 @@
 *                                                                                   *
 *************************************************************************************/
 
-
-#include "test_enums.h"
+#include "unit_tests/variant/test_enums.h"
 
 #include <catch/catch.hpp>
 #include <rttr/type>
@@ -35,9 +34,9 @@ using namespace rttr;
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from empty", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from empty", "[variant]")
 {
-    rttr::variant var;
+    variant var;
     bool ok = false;
     CHECK(var.to_float(&ok) == 0.0f);
     CHECK(ok == false);
@@ -45,9 +44,9 @@ TEST_CASE("rttr::variant::to_float() - from empty", "[rttr::variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from bool", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from bool", "[variant]")
 {
-    rttr::variant var = true;
+    variant var = true;
     REQUIRE(var.is_valid() == true);
     REQUIRE(var.can_convert<float>() == true);
 
@@ -74,11 +73,11 @@ TEST_CASE("rttr::variant::to_float() - from bool", "[rttr::variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from char", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from char", "[variant]")
 {
     SECTION("valid conversion")
     {
-        rttr::variant var = char('A');
+        variant var = char('A');
         REQUIRE(var.can_convert<float>() == true);
         bool ok = false;
         CHECK(var.to_float(&ok) == 65.0);
@@ -94,7 +93,7 @@ RTTR_BEGIN_DISABLE_CONDITIONAL_EXPR_WARNING
     {
         SECTION("valid conversion negative")
         {
-            rttr::variant var = char(-60);
+            variant var = char(-60);
             bool ok = false;
             CHECK(var.to_float(&ok) == -60.0);
             CHECK(ok == true);
@@ -108,11 +107,11 @@ RTTR_END_DISABLE_CONDITIONAL_EXPR_WARNING
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from std::string", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from std::string", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        rttr::variant var = std::string("5000000000");
+        variant var = std::string("5000000000");
         REQUIRE(var.can_convert<float>() == true);
         bool ok = false;
         CHECK(var.to_float(&ok) == 5000000000.0f);
@@ -124,7 +123,7 @@ TEST_CASE("rttr::variant::to_float() - from std::string", "[rttr::variant]")
 
     SECTION("valid conversion negative")
     {
-        rttr::variant var = std::string("-5000000000");
+        variant var = std::string("-5000000000");
         bool ok = false;
         CHECK(var.to_float(&ok) == -5000000000.0f);
         CHECK(ok == true);
@@ -133,7 +132,7 @@ TEST_CASE("rttr::variant::to_float() - from std::string", "[rttr::variant]")
 
     SECTION("too big")
     {
-        rttr::variant var = std::string("3.40282e+39f");
+        variant var = std::string("3.40282e+39f");
         bool ok = false;
         CHECK(var.to_float(&ok) == 0.0);
         CHECK(ok == false);
@@ -142,7 +141,7 @@ TEST_CASE("rttr::variant::to_float() - from std::string", "[rttr::variant]")
 
     SECTION("too small")
     {
-        rttr::variant var = std::string("-3.40282e+39f");
+        variant var = std::string("-3.40282e+39f");
         bool ok = false;
         CHECK(var.to_float(&ok) == 0.0);
         CHECK(ok == false);
@@ -151,7 +150,7 @@ TEST_CASE("rttr::variant::to_float() - from std::string", "[rttr::variant]")
 
     SECTION("invalid conversion")
     {
-        rttr::variant var = std::string("text 34 and text");
+        variant var = std::string("text 34 and text");
         bool ok = false;
         CHECK(var.to_float(&ok) == 0.0);
         CHECK(ok == false);
@@ -167,11 +166,11 @@ TEST_CASE("rttr::variant::to_float() - from std::string", "[rttr::variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from int", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from int", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        rttr::variant var = 2147483640;
+        variant var = 2147483640;
         REQUIRE(var.can_convert<float>() == true);
         bool ok = false;
         CHECK(var.to_float(&ok) == 2147483640.0f);
@@ -183,7 +182,7 @@ TEST_CASE("rttr::variant::to_float() - from int", "[rttr::variant]")
 
     SECTION("valid conversion negative")
     {
-        rttr::variant var = -2147483640;
+        variant var = -2147483640;
         bool ok = false;
         CHECK(var.to_float(&ok) == -2147483640.0f);
         CHECK(ok == true);
@@ -193,11 +192,11 @@ TEST_CASE("rttr::variant::to_float() - from int", "[rttr::variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from float", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from float", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        rttr::variant var = 214748.9f;
+        variant var = 214748.9f;
         REQUIRE(var.can_convert<float>() == true);
         bool ok = false;
         CHECK(var.to_float(&ok) == Approx(214748.9));
@@ -209,7 +208,7 @@ TEST_CASE("rttr::variant::to_float() - from float", "[rttr::variant]")
 
     SECTION("valid conversion negative")
     {
-        rttr::variant var = -214748.9f;
+        variant var = -214748.9f;
         bool ok = false;
         CHECK(var.to_float(&ok) == Approx(-214748.9));
         CHECK(ok == true);
@@ -219,11 +218,11 @@ TEST_CASE("rttr::variant::to_float() - from float", "[rttr::variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from double", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from double", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        rttr::variant var = 5000000000.9;
+        variant var = 5000000000.9;
         REQUIRE(var.can_convert<float>() == true);
         bool ok = false;
         CHECK(var.to_float(&ok) == Approx(5000000000.9));
@@ -235,7 +234,7 @@ TEST_CASE("rttr::variant::to_float() - from double", "[rttr::variant]")
 
     SECTION("valid conversion negative")
     {
-        rttr::variant var = -5000000000.9;
+        variant var = -5000000000.9;
         bool ok = false;
         CHECK(var.to_float(&ok) == Approx(-5000000000.9));
         CHECK(ok == true);
@@ -244,7 +243,7 @@ TEST_CASE("rttr::variant::to_float() - from double", "[rttr::variant]")
 
     SECTION("too big")
     {
-        rttr::variant var = 3.40282e+39;
+        variant var = 3.40282e+39;
         bool ok = false;
         CHECK(var.to_float(&ok) == 0.0f);
         CHECK(ok == false);
@@ -253,7 +252,7 @@ TEST_CASE("rttr::variant::to_float() - from double", "[rttr::variant]")
 
     SECTION("too small")
     {
-        rttr::variant var = -3.40282e+39;
+        variant var = -3.40282e+39;
         bool ok = false;
         CHECK(var.to_float(&ok) == 0.0f);
         CHECK(ok == false);
@@ -263,11 +262,11 @@ TEST_CASE("rttr::variant::to_float() - from double", "[rttr::variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from int8_t", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from int8_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        rttr::variant var = int8_t(50);
+        variant var = int8_t(50);
         REQUIRE(var.can_convert<float>() == true);
         bool ok = false;
         CHECK(var.to_float(&ok) == 50.0f);
@@ -279,7 +278,7 @@ TEST_CASE("rttr::variant::to_float() - from int8_t", "[rttr::variant]")
 
     SECTION("valid conversion negative")
     {
-        rttr::variant var = int8_t(-60);
+        variant var = int8_t(-60);
         bool ok = false;
         CHECK(var.to_float(&ok) == -60.0f);
         CHECK(ok == true);
@@ -289,11 +288,11 @@ TEST_CASE("rttr::variant::to_float() - from int8_t", "[rttr::variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from int16_t", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from int16_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        rttr::variant var = int16_t(32760);
+        variant var = int16_t(32760);
         REQUIRE(var.can_convert<float>() == true);
         bool ok = false;
         CHECK(var.to_float(&ok) == 32760.0f);
@@ -305,7 +304,7 @@ TEST_CASE("rttr::variant::to_float() - from int16_t", "[rttr::variant]")
 
     SECTION("valid conversion negative")
     {
-        rttr::variant var = int16_t(-32760);
+        variant var = int16_t(-32760);
         bool ok = false;
         CHECK(var.to_float(&ok) == -32760.0);
         CHECK(ok == true);
@@ -315,11 +314,11 @@ TEST_CASE("rttr::variant::to_float() - from int16_t", "[rttr::variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from int32_t", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from int32_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        rttr::variant var = int32_t(2147483640);
+        variant var = int32_t(2147483640);
         REQUIRE(var.can_convert<float>() == true);
         bool ok = false;
         CHECK(var.to_float(&ok) == 2147483640.0f);
@@ -331,7 +330,7 @@ TEST_CASE("rttr::variant::to_float() - from int32_t", "[rttr::variant]")
 
     SECTION("valid conversion negative")
     {
-        rttr::variant var = int32_t(-2147483640);
+        variant var = int32_t(-2147483640);
         bool ok = false;
         CHECK(var.to_float(&ok) == -2147483640.0f);
         CHECK(ok == true);
@@ -341,11 +340,11 @@ TEST_CASE("rttr::variant::to_float() - from int32_t", "[rttr::variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from int64_t", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from int64_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        rttr::variant var = int64_t(5000000000L);
+        variant var = int64_t(5000000000L);
         REQUIRE(var.can_convert<float>() == true);
         bool ok = false;
         CHECK(var.to_float(&ok) == 5000000000.0f);
@@ -357,7 +356,7 @@ TEST_CASE("rttr::variant::to_float() - from int64_t", "[rttr::variant]")
 
     SECTION("valid conversion negative")
     {
-        rttr::variant var = int64_t(-5000000000L);
+        variant var = int64_t(-5000000000L);
         bool ok = false;
         CHECK(var.to_float(&ok) == -5000000000.0f);
         CHECK(ok == true);
@@ -368,11 +367,11 @@ TEST_CASE("rttr::variant::to_float() - from int64_t", "[rttr::variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from uint8_t", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from uint8_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        rttr::variant var = uint8_t(50);
+        variant var = uint8_t(50);
         REQUIRE(var.can_convert<uint8_t>() == true);
         bool ok = false;
         CHECK(var.to_float(&ok) == 50.0f);
@@ -385,11 +384,11 @@ TEST_CASE("rttr::variant::to_float() - from uint8_t", "[rttr::variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from uint16_t", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from uint16_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        rttr::variant var = uint16_t(32760);
+        variant var = uint16_t(32760);
         REQUIRE(var.can_convert<uint16_t>() == true);
         bool ok = false;
         CHECK(var.to_float(&ok) == 32760.0f);
@@ -402,11 +401,11 @@ TEST_CASE("rttr::variant::to_float() - from uint16_t", "[rttr::variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from uint32_t", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from uint32_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        rttr::variant var = uint32_t(32760);
+        variant var = uint32_t(32760);
         REQUIRE(var.can_convert<uint32_t>() == true);
         bool ok = false;
         CHECK(var.to_float(&ok) == 32760.0f);
@@ -419,11 +418,11 @@ TEST_CASE("rttr::variant::to_float() - from uint32_t", "[rttr::variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from uint64_t", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from uint64_t", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        rttr::variant var = uint64_t(2147483640);
+        variant var = uint64_t(2147483640);
         REQUIRE(var.can_convert<uint64_t>() == true);
         bool ok = false;
         CHECK(var.to_float(&ok) == 2147483640.0f);
@@ -436,11 +435,11 @@ TEST_CASE("rttr::variant::to_float() - from uint64_t", "[rttr::variant]")
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-TEST_CASE("rttr::variant::to_float() - from enum", "[rttr::variant]")
+TEST_CASE("variant::to_float() - from enum", "[variant]")
 {
     SECTION("valid conversion positive")
     {
-        rttr::variant var = enum_int32_t::VALUE_1;
+        variant var = enum_int32_t::VALUE_1;
         REQUIRE(var.can_convert<float>() == true);
         bool ok = false;
         CHECK(var.to_float(&ok) == 2147483630.0f);
@@ -452,7 +451,7 @@ TEST_CASE("rttr::variant::to_float() - from enum", "[rttr::variant]")
 
     SECTION("valid conversion negative")
     {
-        rttr::variant var = enum_int32_t::VALUE_NEG;
+        variant var = enum_int32_t::VALUE_NEG;
         bool ok = false;
         CHECK(var.to_float(&ok) == -2147483630.0f);
         CHECK(ok == true);
